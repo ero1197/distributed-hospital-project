@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Distributed Hospital System</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header class="top-bar">
+    <div class="container header-inner">
+      <h1 class="app-title">Distributed Hospital Dashboard</h1>
+      <nav class="nav-links">
+        <a href="{{ url_for('dashboard') }}">Patients</a>
+        <a href="{{ url_for('new_patient') }}">Register Patient</a>
+        <a href="{{ url_for('pharmacy_view') }}">Pharmacy</a>
+        <a href="{{ url_for('radiology_view') }}">Radiology</a>
+          <span class="nav-user">Signed in as {{ current_user.username }}</span>
+          <a href="{{ url_for('logout') }}">Logout</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2025 Distributed Hospital System · Demo for Distributed Systems Course</p>
+    </div>
+  </footer>
+</body>
+</html>

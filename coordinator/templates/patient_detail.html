@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="section-header">
+    <div>
+      <h2>Patient: {{ patient.name }}</h2>
+      <p class="subtitle">
+        Global ID {{ patient.global_id }} · Department: {{ patient.department|capitalize }}
+      </p>
+    </div>
+    <a class="btn" href="{{ url_for('dashboard') }}">← Back to Patients</a>
+  </section>
+
+  <section class="grid-two-cols">
+    <div class="card">
+      <h3>Patient Information</h3>
+      <p><strong>DOB:</strong> {{ patient.dob or "—" }}</p>
+      <p><strong>Contact:</strong> {{ patient.contact_info or "—" }}</p>
+      <p class="meta">Last updated: {{ patient.last_updated.strftime("%Y-%m-%d %H:%M") }}</p>
+    </div>
+
+    <div class="card form-card">
+      <h3>Add Emergency Visit</h3>
+
+      {% if visit_error %}
+        <div class="alert error">{{ visit_error }}</div>
+      {% endif %}
+
+      <form method="post" action="{{ url_for('add_emergency_visit', global_id=patient.global_id) }}">
+        <div class="form-row">
+          <label for="symptoms">Symptoms</label>
+          <textarea id="symptoms" name="symptoms" rows="3" required
+                    placeholder="Chest pain, shortness of breath..."></textarea>
+        </div>
+
+        <div class="form-row">
+          <label for="triage_level">Triage Level</label>
+          <select id="triage_level" name="triage_level" required>
+            <option value="high">High (critical)</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+        </div>
+
+        <button class="btn primary" type="submit">Add Visit</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="grid-two-cols">
+    <div>
+      <h3>Emergency Visit History</h3>
+      {% if visits %}
+        <div class="card-list">
+          {% for v in visits %}
+            <div class="card">
+              <p><strong>Symptoms:</strong> {{ v.symptoms }}</p>
+              <p><strong>Triage:</strong> {{ v.triage_level|capitalize }}</p>
+              <p class="meta">Created at: {{ v.created_at }}</p>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="card">
+          <p class="subtitle">No emergency visits recorded yet for this patient.</p>
+        </div>
+      {% endif %}
+    </div>
+
+    <div>
+      <div class="card form-card">
+        <h3>Book Appointment</h3>
+
+        {% if appt_error %}
+          <div class="alert error">{{ appt_error }}</div>
+        {% endif %}
+
+        <form method="post" action="{{ url_for('add_appointment', global_id=patient.global_id) }}">
+          <div class="form-row">
+            <label for="department">Department</label>
+            <select id="department" name="department">
+              <option value="{{ patient.department }}">{{ patient.department|capitalize }} (default)</option>
+              <option value="radiology">Radiology</option>
+              <option value="pharmacy">Pharmacy</option>
+              <option value="emergency">Emergency</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label for="start_time">Date &amp; Time</label>
+            <input id="start_time" name="start_time" type="datetime-local" required>
+          </div>
+
+          <div class="form-row">
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes" rows="2" placeholder="Reason for visit, doctor preference, etc."></textarea>
+          </div>
+
+          <button class="btn primary" type="submit">Book Appointment</button>
+        </form>
+      </div>
+
+      <div class="card" style="margin-top: 12px;">
+        <h3>Upcoming Appointments</h3>
+        {% if appointments %}
+          <ul class="appt-list">
+            {% for a in appointments %}
+              <li>
+                <strong>{{ a.department|capitalize }}</strong>
+                · {{ a.start_time.strftime("%Y-%m-%d %H:%M") }}
+                · <span class="chip">{{ a.status }}</span><br>
+                <span class="meta">{{ a.notes or "" }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="subtitle">No appointments scheduled.</p>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

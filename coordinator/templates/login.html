@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login · Distributed Hospital Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body class="auth-body">
+  <main class="auth-container">
+    <div class="card form-card">
+      <h2>Staff Login</h2>
+      <p class="subtitle">Use the demo admin account or any configured user.</p>
+
+      {% with messages = get_flashed_messages(category_filter=["error"]) %}
+        {% if messages %}
+          <div class="alert error">
+            {% for m in messages %}
+              <p>{{ m }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <form method="post">
+        <div class="form-row">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" required value="admin">
+        </div>
+
+        <div class="form-row">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" required value="admin123">
+        </div>
+
+        <button class="btn primary" type="submit">Sign in</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>

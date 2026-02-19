@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="section-header">
+    <div>
+      <h2>Pharmacy</h2>
+      <p class="subtitle">
+        Manage medications and prescriptions from the distributed Pharmacy service.
+      </p>
+    </div>
+  </section>
+
+  <section class="grid-two-cols">
+    <!-- Medications -->
+    <div class="card form-card">
+      <h3>Add Medication</h3>
+      {% if med_error %}
+        <div class="alert error">{{ med_error }}</div>
+      {% endif %}
+      <form method="post" action="{{ url_for('pharmacy_add_medication') }}">
+        <div class="form-row">
+          <label for="med_name">Name</label>
+          <input id="med_name" name="name" type="text" required placeholder="Amoxicillin">
+        </div>
+        <div class="form-row">
+          <label for="strength">Strength</label>
+          <input id="strength" name="strength" type="text" placeholder="500 mg capsule">
+        </div>
+        <div class="form-row">
+          <label for="stock">Initial Stock</label>
+          <input id="stock" name="stock" type="number" min="0" value="0">
+        </div>
+        <button class="btn primary" type="submit">Add Medication</button>
+      </form>
+    </div>
+
+    <!-- Prescriptions -->
+    <div class="card form-card">
+      <h3>Create Prescription</h3>
+      {% if rx_error %}
+        <div class="alert error">{{ rx_error }}</div>
+      {% endif %}
+      <form method="post" action="{{ url_for('pharmacy_add_prescription') }}">
+        <div class="form-row">
+          <label for="patient_name">Patient Name</label>
+          <input id="patient_name" name="patient_name" type="text" required placeholder="John Doe">
+        </div>
+        <div class="form-row">
+          <label for="medication_id">Medication</label>
+          <select id="medication_id" name="medication_id" required>
+            <option value="" disabled selected>Select medication</option>
+            {% for m in medications %}
+              <option value="{{ m.id }}">
+                {{ m.name }}{% if m.strength %} – {{ m.strength }}{% endif %} (Stock: {{ m.stock }})
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="quantity">Quantity</label>
+          <input id="quantity" name="quantity" type="number" min="1" value="1" required>
+        </div>
+        <button class="btn primary" type="submit">Create Prescription</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="section-header">
+    <h3>Current Inventory</h3>
+  </section>
+
+  <div class="card">
+    {% if medications %}
+      <table class="simple-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Medication</th>
+            <th>Strength</th>
+            <th>Stock</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in medications %}
+            <tr>
+              <td>{{ m.id }}</td>
+              <td>{{ m.name }}</td>
+              <td>{{ m.strength or "—" }}</td>
+              <td>{{ m.stock }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="subtitle">No medications recorded yet.</p>
+    {% endif %}
+  </div>
+
+  <section class="section-header" style="margin-top: 16px;">
+    <h3>Recent Prescriptions</h3>
+  </section>
+
+  <div class="card">
+    {% if prescriptions %}
+      <table class="simple-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Patient</th>
+            <th>Medication</th>
+            <th>Qty</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in prescriptions %}
+            <tr>
+              <td>{{ r.id }}</td>
+              <td>{{ r.patient_name }}</td>
+              <td>{{ r.medication }}</td>
+              <td>{{ r.quantity }}</td>
+              <td>{{ r.status }}</td>
+              <td>{{ r.created_at }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="subtitle">No prescriptions yet.</p>
+    {% endif %}
+  </div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="section-header">
+    <div>
+      <h2>Register New Patient</h2>
+      <p class="subtitle">This will create the patient in the Emergency service and sync to the global index.</p>
+    </div>
+  </section>
+
+  {% if error %}
+    <div class="alert error">{{ error }}</div>
+  {% endif %}
+
+  <form method="post" class="card form-card">
+    <div class="form-row">
+      <label for="name">Full Name</label>
+      <input id="name" name="name" type="text" required placeholder="John Doe">
+    </div>
+
+    <div class="form-row">
+      <label for="dob">Date of Birth</label>
+      <input id="dob" name="dob" type="date">
+    </div>
+
+    <div class="form-row">
+      <label for="contact_info">Contact Information</label>
+      <input id="contact_info" name="contact_info" type="text" placeholder="Phone, email, etc.">
+    </div>
+
+    <button class="btn primary" type="submit">Create Patient</button>
+  </form>
+{% endblock %}

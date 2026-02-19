@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="section-header">
+    <div>
+      <h2>Global Patient Index</h2>
+      <p class="subtitle">
+        Patients synced from distributed departments (currently Emergency).
+      </p>
+    </div>
+    <a class="btn primary" href="{{ url_for('new_patient') }}">+ Register New Patient</a>
+  </section>
+
+  {% if patients %}
+    <div class="card-list">
+      {% for p in patients %}
+        <a class="card patient-card" href="{{ url_for('patient_detail', global_id=p.global_id) }}">
+          <div class="card-header">
+            <h3>{{ p.name }}</h3>
+            <span class="chip">{{ p.department|capitalize }}</span>
+          </div>
+          <p><strong>DOB:</strong> {{ p.dob or "—" }}</p>
+          <p><strong>Contact:</strong> {{ p.contact_info or "—" }}</p>
+          <p class="meta">Last updated: {{ p.last_updated.strftime("%Y-%m-%d %H:%M") }}</p>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <p>No patients in the system yet.</p>
+      <a class="btn primary" href="{{ url_for('new_patient') }}">Register the first patient</a>
+    </div>
+  {% endif %}
+{% endblock %}

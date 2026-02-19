@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="section-header">
+    <div>
+      <h2>Radiology</h2>
+      <p class="subtitle">
+        Manage imaging orders and reports from the distributed Radiology service.
+      </p>
+    </div>
+  </section>
+
+  <section class="grid-two-cols">
+    <div class="card form-card">
+      <h3>Create Imaging Order</h3>
+      {% if order_error %}
+        <div class="alert error">{{ order_error }}</div>
+      {% endif %}
+      <form method="post" action="{{ url_for('radiology_add_order') }}">
+        <div class="form-row">
+          <label for="patient_name">Patient Name</label>
+          <input id="patient_name" name="patient_name" type="text"
+                 required placeholder="John Doe">
+        </div>
+        <div class="form-row">
+          <label for="modality">Modality</label>
+          <select id="modality" name="modality" required>
+            <option value="X-ray">X-ray</option>
+            <option value="CT">CT</option>
+            <option value="MRI">MRI</option>
+            <option value="Ultrasound">Ultrasound</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="body_part">Body Part</label>
+          <input id="body_part" name="body_part" type="text" placeholder="Chest, knee, head, etc.">
+        </div>
+        <button class="btn primary" type="submit">Create Order</button>
+      </form>
+    </div>
+
+    <div class="card form-card">
+      <h3>Complete Order</h3>
+      {% if complete_error %}
+        <div class="alert error">{{ complete_error }}</div>
+      {% endif %}
+      <form method="post" action="{{ url_for('radiology_complete_order') }}">
+        <div class="form-row">
+          <label for="order_id">Order ID</label>
+          <input id="order_id" name="order_id" type="number" min="1" required>
+        </div>
+        <div class="form-row">
+          <label for="report">Report Summary</label>
+          <textarea id="report" name="report" rows="3"
+                    placeholder="Findings, impressions..."></textarea>
+        </div>
+        <button class="btn primary" type="submit">Mark as Completed</button>
+      </form>
+    </div>
+  </section>
+
+  <section class="section-header">
+    <h3>Recent Imaging Orders</h3>
+  </section>
+
+  <div class="card">
+    {% if orders %}
+      <table class="simple-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Patient</th>
+            <th>Modality</th>
+            <th>Body Part</th>
+            <th>Status</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in orders %}
+            <tr>
+              <td>{{ o.id }}</td>
+              <td>{{ o.patient_name }}</td>
+              <td>{{ o.modality }}</td>
+              <td>{{ o.body_part or "—" }}</td>
+              <td>{{ o.status }}</td>
+              <td>{{ o.created_at }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="subtitle">No radiology orders yet.</p>
+    {% endif %}
+  </div>
+{% endblock %}
